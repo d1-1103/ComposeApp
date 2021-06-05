@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.urtech.composeapp.ui.theme.ComposeAppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -46,31 +49,42 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+class MyViewModel : ViewModel() {
+
+}
+
 @Composable
 fun Search() {
+    val myViewModel: MyViewModel = viewModel()
+
     var searchText by remember {
         mutableStateOf("")
     }
-    Column(modifier = Modifier.padding(10.dp)) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = { Text("input something...") },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                cursorColor = Color.Transparent
+
+    val listState0 = rememberLazyListState()
+
+    Box {
+        Column(modifier = Modifier.padding(10.dp)) {
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = { Text("input something...") },
+                colors = TextFieldDefaults.textFieldColors()
             )
-        )
-        LazyColumn {
-            items(names.filter { it.trim().contains(searchText, ignoreCase = true) }) {
-                Text(
-                    it.replaceFirst(" ", " : "), modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                )
-                Divider()
+            LazyColumn(state = listState0) {
+                items(names.filter { it.trim().contains(searchText, ignoreCase = true) }) {
+                    Text(
+                        it.replaceFirst(" ", " : "), modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)
+                    )
+                    Divider()
+                }
             }
+        }
+        FloatingActionButton(onClick = { /*TODO*/ }) {
+
         }
     }
 }
@@ -82,7 +96,7 @@ Abel 埃布尔 拉丁 生命；呼吸。##
 Abner 艾布纳 希伯来 睿智；有智慧　。##
 Abraham 亚伯拉罕 希伯来 崇高的父亲；众人之父。##
 Adair 亚岱尔 苏格兰，爱尔兰 犹如像树般坚强。##
-Adam 亚当 希伯来 天下第一个男人，男性
+Adam 亚当 希伯来 天下第一个男人，男性。##
 Addison 艾狄生 英国 亚当的后代。##
 Adolph 阿道夫 德国 高贵的狼。##
 Adonis 亚度尼斯 希腊 美男子。##
